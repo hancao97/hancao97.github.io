@@ -5,7 +5,7 @@ keywords: Front End, CS, Design, Translation, Art, PM
 author: 寒草
 language: zh-CN
 timezone:
-url: https://gepingli.github.io/hancao-blob/
+url: https://github.com/hancao97/hancao97.github.io
 permalink: ':year/:month/:day/:title/'
 permalink_defaults: null
 pretty_urls:
@@ -62,4 +62,4 @@ ignore: null
 theme: icarus
 deploy:
   type: git
-  repo: https://github.com/gepingli/hancao-blob
+  repo: https://github.com/hancao97/hancao97.github.io
