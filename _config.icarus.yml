@@ -209,7 +209,7 @@ sidebar:
     # Left sidebar configurations
     left:
         # Whether the sidebar sticks to the top when page scrolls
-        sticky: true
+        sticky: false
     # Right sidebar configurations
     right:
         # Whether the sidebar sticks to the top when page scrolls
@@ -235,7 +235,7 @@ widgets:
         # Email address for the Gravatar
         gravatar: 
         # URL or path for the follow button
-        follow_link: 'https://github.com/gepingli'
+        follow_link: 'https://github.com/hancao97'
         # Links to be shown on the bottom of the profile widget
         social_links:
             掘金:
@@ -243,7 +243,7 @@ widgets:
                 url: 'https://juejin.cn/user/703340610597064/posts'
             Github:
                 icon: fab fa-github
-                url: 'https://github.com/gepingli'
+                url: 'https://github.com/hancao97'
     # Table of contents widget configurations
     -
         # Where should the widget be placed, left sidebar or right sidebar
