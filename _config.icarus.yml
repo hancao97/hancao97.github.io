@@ -264,7 +264,7 @@ widgets:
         links:
             掘金专栏: 'https://juejin.cn/user/703340610597064/columns'
             知乎: 'https://www.zhihu.com/people/ge-ping-li'
-            洛竹: 'https://juejin.cn/user/325111174662855/posts'
+            洛竹: 'https://youngjuning.js.org/'
     # Categories widget configurations
     -
         # Where should the widget be placed, left sidebar or right sidebar
