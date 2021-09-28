@@ -4,8 +4,6 @@ on:
     branches:
       - main # default branch
   schedule:
-    # 可以运行预定工作流程的最短间隔是每 5 分钟一次
-    - cron: "0 */2 * * *"
   workflow_dispatch:
 jobs:
   deploy:
