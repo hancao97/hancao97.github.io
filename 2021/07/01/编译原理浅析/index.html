@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>前端学编译原理（一）：编译引论 - 寒草的博客</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="寒草的博客"><meta name="msapplication-TileImage" content="/img/favicon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="寒草的博客"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="作者：寒草微信：hancao97介绍：一个不一样的北漂程序员(工作10个月的年轻程序员)，欢迎加微信批评指正交流技术或者一起玩耍约饭  引言凡事都可以扯一扯情怀在我在开始写文章的那一段时间，我发了这样一篇文章我，24岁，展望一下？里面不仅提到了我的各种离谱的flag，也提到了我的母校，我怀念那段时光，也因整个大四那一年没有在母校度过，因为疫情的原因没有毕业照，没有毕业旅行而十分可惜。但是，我还是"><meta property="og:type" content="blog"><meta property="og:title" content="前端学编译原理（一）：编译引论"><meta property="og:url" content="https://hancao97.github.io/2021/07/01/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E6%B5%85%E6%9E%90/"><meta property="og:site_name" content="寒草的博客"><meta property="og:description" content="作者：寒草微信：hancao97介绍：一个不一样的北漂程序员(工作10个月的年轻程序员)，欢迎加微信批评指正交流技术或者一起玩耍约饭  引言凡事都可以扯一扯情怀在我在开始写文章的那一段时间，我发了这样一篇文章我，24岁，展望一下？里面不仅提到了我的各种离谱的flag，也提到了我的母校，我怀念那段时光，也因整个大四那一年没有在母校度过，因为疫情的原因没有毕业照，没有毕业旅行而十分可惜。但是，我还是"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://hancao97.github.io/img/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E6%B5%85%E6%9E%90/bianyi.jpeg"><meta property="article:published_time" content="2021-07-01T08:07:00.000Z"><meta property="article:modified_time" content="2021-09-28T02:08:11.757Z"><meta property="article:author" content="寒草"><meta property="article:tag" content="前端"><meta property="article:tag" content="javascript"><meta property="article:tag" content="编译原理"><meta property="article:tag" content="计算机基础"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="/img/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E6%B5%85%E6%9E%90/bianyi.jpeg"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://hancao97.github.io/2021/07/01/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E6%B5%85%E6%9E%90/"},"headline":"前端学编译原理（一）：编译引论","image":[],"datePublished":"2021-07-01T08:07:00.000Z","dateModified":"2021-09-28T02:08:11.757Z","author":{"@type":"Person","name":"寒草"},"publisher":{"@type":"Organization","name":"寒草的博客","logo":{"@type":"ImageObject","url":"https://hancao97.github.io/img/logo.svg"}},"description":"作者：寒草微信：hancao97介绍：一个不一样的北漂程序员(工作10个月的年轻程序员)，欢迎加微信批评指正交流技术或者一起玩耍约饭  引言凡事都可以扯一扯情怀在我在开始写文章的那一段时间，我发了这样一篇文章我，24岁，展望一下？里面不仅提到了我的各种离谱的flag，也提到了我的母校，我怀念那段时光，也因整个大四那一年没有在母校度过，因为疫情的原因没有毕业照，没有毕业旅行而十分可惜。但是，我还是"}</script><link rel="canonical" href="https://hancao97.github.io/2021/07/01/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E6%B5%85%E6%9E%90/"><link rel="icon" href="/img/favicon.svg"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;400;600&amp;family=Roboto+Mono"><link rel="stylesheet" href="/css/cyberpunk.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css"><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><!--!--><!--!--><meta name="generator" content="Hexo 5.4.0"></head><body class="is-3-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.svg" alt="寒草的博客" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">主页</a><a class="navbar-item" href="/archives">文章</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a><a class="navbar-item" href="/about">关于</a></div><div class="navbar-end"><a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-6-widescreen"><div class="card"><div class="card-image"><span class="image is-7by3"><img class="fill" src="/img/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E6%B5%85%E6%9E%90/bianyi.jpeg" alt="前端学编译原理（一）：编译引论"></span></div><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2021-07-01T08:07:00.000Z" title="7/1/2021, 8:07:00 AM">2021-07-01</time>发表</span><span class="level-item"><time dateTime="2021-09-28T02:08:11.757Z" title="9/28/2021, 2:08:11 AM">2021-09-28</time>更新</span><span class="level-item"><a class="link-muted" href="/categories/%E5%89%8D%E7%AB%AF%E4%B8%8E%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/">前端与编译原理</a></span><span class="level-item">1 小时读完 (大约8137个字)</span></div></div><h1 class="title is-3 is-size-4-mobile">前端学编译原理（一）：编译引论</h1><div class="content"><blockquote>
+<p>作者：寒草<br>微信：hancao97<br>介绍：一个不一样的北漂程序员(工作10个月的年轻程序员)，欢迎加微信批评指正交流技术或者一起玩耍约饭</p>
+</blockquote>
+<h1 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h1><h2 id="凡事都可以扯一扯情怀"><a href="#凡事都可以扯一扯情怀" class="headerlink" title="凡事都可以扯一扯情怀"></a>凡事都可以扯一扯情怀</h2><p>在我在开始写文章的那一段时间，我发了这样一篇文章<br><a target="_blank" rel="noopener" href="https://juejin.cn/post/6923894259620053000">我，24岁，展望一下？</a>里面不仅提到了我的各种离谱的flag，也提到了我的母校，我怀念那段时光，也因整个大四那一年没有在母校度过，因为疫情的原因没有毕业照，没有毕业旅行而十分可惜。<br>但是，我还是记得我在母校度过的美好时光，而<code>编译原理</code>也正是我在那里求学过程中有印象的最后一个专业课。前两天时间，我也在和别人讨论我的<a target="_blank" rel="noopener" href="https://juejin.cn/post/6968246300122808334">js实现按键精灵——尝试前端实现自动化测试（一）</a>，在交流探讨过程中，我感受到其实曾经学习过的<code>编译原理</code>也确实在影响着我的思考方向。<br>于是我找回了大学的课件资料，并会结合更多的资料，去完成我的<code>前端学编译原理</code>这个系列：</p>
+<blockquote>
+<p>一方面是对知识的回顾<br>一方面是怀念那曾经在学校里不曾认真听讲，期末突击完成的课（狗头）。</p>
+</blockquote>
+<h2 id="为什么要学编译原理"><a href="#为什么要学编译原理" class="headerlink" title="为什么要学编译原理"></a>为什么要学编译原理</h2><p>首先介绍一下，我是一名前端工程师，所以在此以前端的视角出发来思考这个问题：</p>
+<blockquote>
+<p>为什么我们要学习编译原理？  </p>
+</blockquote>
+<p>首先我想去纠正一个误区，前端并不是只要去弄好HTML，CSS，JS三大金刚，了解了解各种不同的布局模式，学习一些主流的框架，用一用人家提供好的API，用一下社区成熟的脚手架快速搭建项目就可以了。是这样就能胜任很大部分的前端工作，但是深入学习我们会发现一件可怕的事情，我们会发现在前端这个领域会有层出不穷的各种库，各种工具，各种框架。技术推陈出新，可是万变不离其宗，编译原理作为一个基础理论学科，学习编译原理可以帮助你：</p>
+<ul>
+<li><p>更快更容易的学习新的技术 </p>
+</li>
+<li><p>可以帮助我们更多的了解语言背后的抽象 </p>
+</li>
+<li><p>可以帮助我们用更优雅的形式去描述复杂的模型<br>而且可能所谓编译器更像是一个把源语言变成目标语言黑盒子，所以我们其实对他并没有太大的感知，但是其实它已经渗透在我们日常工作的方方面面了：  </p>
+</li>
+<li><p><strong>eslint</strong>：代码检查</p>
+</li>
+<li><p><strong>es6，ts转码工具</strong>：Babel（将采用 ECMAScript 2015+ 语法编写的代码转换为向后兼容的 JavaScript 语法），tsc（用于将TypeScript 转换为 JavaScript 代码）</p>
+</li>
+<li><p><strong>各种模版引擎（输入模板字符串 + 数据，得到渲染过的字符串）</strong>：最早诞生于服务端动态页面的开发，如 JSP、PHP、ASP 等模板引擎，自 Node.js 快速发展以后，前端界又产出了非常多的轮子，包括 EJS、art-template、Pug 、Mustache等等。【<em>个人对模版引擎没什么了解，此处列举的模版引擎来着万能的网友</em>】</p>
+</li>
+<li><p><strong>CSS预处理器</strong>：sass、less等等，让我们从纯css时代的刀耕火种中解放。赋予了前端工程师们更强大的样式编写能力（虽然我可能用到的也只是他们提供的皮毛，但是支持css嵌套真的是深得我心）。</p>
+</li>
+<li><p><strong>主流框架中的应用</strong>：区别于模版引擎，不可将前端框架和模板引擎混为一谈，很多的主流框架都有对编译原理的应用，包括vue，react，angular。</p>
+</li>
+<li><p><strong>markdown</strong>：比如我现在正在掘金写我的文章，左边是markdown语法，右边就可以同步预览最终的展示效果～</p>
+</li>
+<li><p><strong>…</strong></p>
+</li>
+</ul>
+<blockquote>
+<p><strong>总结一下</strong>：<br>可能我对于学习编译原理的原因描述不是很专业，可能也有我能力所限的原因，也可能是因为我工作年限并没有达到某个地步，但是我希望大家了解的是以下几点：  </p>
+<ol>
+<li>学习编译原理可以帮助我们更好更快的学习新的技术。</li>
+<li>在前端领域，编译原理已经有了大范围的应用，所以想成为一个更加优秀的前端工程师，编译原理也是一项必修课。</li>
+<li>学习cs专业的基础理论学科，可以帮助你获得突破，去做一些之前只敢想象的事情。</li>
+</ol>
+</blockquote>
+<h2 id="开始前说点什么"><a href="#开始前说点什么" class="headerlink" title="开始前说点什么"></a>开始前说点什么</h2><p>我也不知道以我这粗浅的掌握和拙劣的语言功底能否把这样一个较大的课题讲的清楚明白，但是事在人为，我会尽我所能，让这个系列可以在保证正确性的基础之上保持更新，并以我的视角带大家与我一起感受编译之美。<br><strong>之前我也出过很多系列性质的文章：</strong><br><a target="_blank" rel="noopener" href="https://juejin.cn/column/6966041450156916750">浏览器渲染机制</a><br><a target="_blank" rel="noopener" href="https://juejin.cn/post/6939688892526231582">Promise专题</a><br>如果大家对以上内容有一丢丢兴趣，也欢迎阅读并与我交流探讨，作为刚入行不到一年的新人也期望收到各位大佬各位前辈的批评指正。  </p>
+<blockquote>
+<p>ok，闲言少叙，我们进入正题。</p>
+</blockquote>
+<h1 id="程序设计语言和编译程序"><a href="#程序设计语言和编译程序" class="headerlink" title="程序设计语言和编译程序"></a>程序设计语言和编译程序</h1><h2 id="低级语言基本概念"><a href="#低级语言基本概念" class="headerlink" title="低级语言基本概念"></a>低级语言基本概念</h2><p><strong>介绍：</strong>  </p>
+<blockquote>
+<p><strong>包括机器语言和汇编语言</strong><br><strong>机器语言</strong>：指的是机器能直接识别的程序语言。无需经过翻译，每一操作码在计算机内部都有相应的电路来完成它，或指不经翻译即可为机器直接理解和接受的程序语言或指令代码。计算机硬件只能识别“断开”和“闭合”两种物理状态，也就是0和1。机器语言使用绝对地址和绝对操作码。不同的计算机都有各自的机器语言，即指令系统，不同型号的计算机其机器语言是不相通的，按着一种计算机的机器指令编制的程序，不能在另一种计算机上执行。从使用的角度看，机器语言是最低级的语言。</p>
+<ul>
+<li><strong>操作码</strong>：操作码给出指令完成的功能</li>
+<li><strong>地址码</strong>：地址码给出与操作数相关的地址或者操作数本身</li>
+<li>指令 10110110【操作码】 00000000【地址码】 表示进行一次加法操作</li>
+<li>指令 10110101【操作码】 00000000【地址码】 表示进行一次减法操作</li>
+</ul>
+<p><strong>汇编语言</strong>：是任何一种用于电子计算机、微处理器、微控制器或其他可编程器件的低级语言，亦称为<code>符号语言</code>。在汇编语言中，用助记符（Mnemonics）代替机器指令的操操作码，用地址符号（Symbol）或标号（Label）代替指令或操作数的地址。在不同的设备中，汇编语言对应着不同的机器语言指令集，通过汇编过程转换成机器指令。普遍地说，特定的汇编语言和特定的机器语言指令集是一一对应的,不同平台之间不可直接移植。举个例子，<strong>a = a + b的表达方式</strong>：  </p>
+<ul>
+<li>MOV AX,1</li>
+<li>MOV BX,2</li>
+<li>ADD AX,BX<br>ps：是不是相较于之前的0和1，现在已经可以大致看懂了？</li>
+</ul>
+<p><strong>优点：</strong>  </p>
+</blockquote>
+<ul>
+<li>速度快  </li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>难理解，出错率高，难维护</li>
+<li>依赖于具体机器，移植性差</li>
+</ul>
+<p><strong>发现：</strong></p>
+<ul>
+<li>越是低级的语言对机器越是友好，越是符合机器的思考方式，因此执行效率高。</li>
+<li>越是高级的语言对人类越是友好，越是符合人类的思考方式，因此开发效率高。<h2 id="高级语言基本概念"><a href="#高级语言基本概念" class="headerlink" title="高级语言基本概念"></a>高级语言基本概念</h2><h3 id="形式语言"><a href="#形式语言" class="headerlink" title="形式语言"></a>形式语言</h3></li>
+</ul>
+<p><strong>介绍：</strong></p>
+<blockquote>
+<p>用精确的数学或机器可处理的公式定义的语言。与自然语言对应，自然语言就是人类讲的语言，这类语言不是认为设计，而是自然进化的。形式语言是为了特定的应用而人为设计的语言，存在领域之分，例如数学家用的各种运算符号，化学家用的各种分子式，而<code>编程语言也是一种形式语言，是专门设计用来表达计算过程的形式语言</code>。</p>
+</blockquote>
+<p><strong>特点：</strong></p>
+<ul>
+<li><strong>高度的抽象化</strong>：采用形式化的手段-专用符号,数学公式-来描述语言的结构关系,这种结构关系是抽象的</li>
+<li><strong>是一套演绎系统</strong>：形式语言本身的目的就是要用有限的规则来推导语言中无限的句子,提出形式语言的哲学基础也是想用演绎的方法来研究自然语言</li>
+<li><strong>具有算法的特点</strong><h3 id="高级语言"><a href="#高级语言" class="headerlink" title="高级语言"></a>高级语言</h3></li>
+</ul>
+<p><strong>介绍：</strong></p>
+<blockquote>
+<p>高度封装了的编程语言，与低级语言相对，它更接近于我们平时正常的人思维，其最大的特点是编写容易，代码可读性好。实现同样的功能，使用高级语言耗时更少，程序代码量更短，更容易阅读。其次，高级语言是可移植的，也就是说，仅需稍作修改甚至不用修改，就可将一段代码运行在不同类型的计算机上。现在大多数人使用的语言，如C、C++、Python、Java、Javascript等等，都属于高级语言。<br><strong>优点：</strong></p>
+</blockquote>
+<ul>
+<li>面向自然表达</li>
+<li>更易于学习，易于理解，易于修改</li>
+<li>可移植性高</li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>运行需要其他程序支撑（编译程序等）</li>
+<li>运行速度相比汇编要慢</li>
+<li>占用空间相对较多</li>
+</ul>
+<span id="more"></span>
+
+<h2 id="高级语言与汇编语言程序的执行"><a href="#高级语言与汇编语言程序的执行" class="headerlink" title="高级语言与汇编语言程序的执行"></a>高级语言与汇编语言程序的执行</h2><h3 id="翻译程序"><a href="#翻译程序" class="headerlink" title="翻译程序"></a>翻译程序</h3><p>翻译程序可以将一种计算机编程语言编写的程序翻译成另一种计算机语言。<code>输入对象是源程序</code>，一般是由高级语言编写的程序，<code>输出对象是目标程序</code>，可以是机器语言，汇编语言，或者是用户自定义的某种中间语言程序或者是其他的高级语言。翻译程序可以包括：</p>
+<ul>
+<li>汇编器（Assembler）</li>
+<li>编译器（Compiler）</li>
+<li>…</li>
+</ul>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/de022ce673ba494ba92f91e9de8aad62~tplv-k3u1fbpfcp-watermark.image" alt="image.png"></p>
+<blockquote>
+<p><strong>Linker（链接器）</strong>：将 <code>目标文件内容</code> 连同 <code>运行时库程序</code> 合成到一个 <code>计算机能够加载和执行的目标程序</code></p>
+</blockquote>
+<h3 id="执行方式"><a href="#执行方式" class="headerlink" title="执行方式"></a>执行方式</h3><p>执行高级语言程序的方式分为三种：</p>
+<ul>
+<li>编译方式</li>
+<li>解释方式</li>
+<li>转换方式<br>下面我来具体介绍～<h4 id="编译方式和解释方式"><a href="#编译方式和解释方式" class="headerlink" title="编译方式和解释方式"></a>编译方式和解释方式</h4></li>
+</ul>
+<p><strong>编译方式</strong><br><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fa4d36b1d728480cb24e99033931e5fe~tplv-k3u1fbpfcp-watermark.image" alt="image.png"><br><strong>解释方式</strong><br><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a89478d725b544918704cd47b81283c9~tplv-k3u1fbpfcp-watermark.image" alt="image.png"><br><strong>详细介绍</strong><br>这里我先借助知乎网友的例子，这个过程的区别很像是：  </p>
+<blockquote>
+<p>A是英语演讲者，B是台下的听众，C是翻译官。那么，编译器就是:翻译官把A的演讲的所有内容（等A演讲完）一次性整理好成一份翻译后的文件，发给听众B看。 翻译器就是:翻译官C在A演讲的时候，A讲一句，C翻一句给听众B。</p>
+</blockquote>
+<p>其实这个例子还是很生动形象的，总结起来就是：  </p>
+<ul>
+<li>编译器是在代码运行之前生成目标平台指令，可脱离编译器独立运行。</li>
+<li>解释器在代码运行过程中生成目标平台指令，所以不可以脱离解释器独立运行。<blockquote>
+<p>于是我们看到的现象是，编译型语言要先编译再运行，而解释性语言直接“运行”源代码。  </p>
+</blockquote>
+</li>
+</ul>
+<p>即他们的<code>根本区别</code>就是运行时，解释型需要将程序解释成目标平台指令来运行，费了一道手续，而编译型在运行之前就已经让编译器给程序编译成目标平台指令了，所以更快。<br>ps：此处可以结合后面<code>辩证的看 </code>  那个段落效果更佳～</p>
+<p><strong>解释器与编译器不同角度对比</strong></p>
+<ul>
+<li>着眼点：解释器是执行系统，编译器是转换系统</li>
+<li>程序动态修改：解释执行更胜任，编译执行需要动态编译技术，难度较大</li>
+<li>速度：解释器较慢</li>
+<li>空间开销：解释器开销大</li>
+<li>错误诊断：解释器更强，因为解释器会逐个语句的执行源程序</li>
+</ul>
+<p><strong>辩证的看</strong>  </p>
+<blockquote>
+<p>我们不妨换个角度来看，其实如果单纯从编译方式和解释方式的定义出发，他们是那么的水火不相容，然而编译和解释的界限却并没有如此的清晰，举个例子（下文有流程图）：<strong>Java需要预先把代码编译成虚拟机指令的，然后在运行这些虚拟机指令，有的教科书上会成为混合型或者半编译型，这样的好处之一是在一台机器上编译得到的字节码可以在另一台机器上解释执行，通过网络就可以完成机器之间的迁移</strong>。所以其实我们把他们撕裂着看又有一点点不合理，我查阅资料也发现有很多人对此有不同的见解，其实我眼里，我们高级代码执行，无非是从高级的抽象转化为低层级抽象的一个过程，我们在这个过程中，可能用到了解释器，也可能用到了编译器，这两者的使用并无冲突，就像上面的例子一样，无非是我们可能在降低代码抽象层级的过程中分出了不同的阶段，用了不同的方案而已，无论是编译执行还是解释执行，应该与语言无关，只是使用了什么样的方案把代码让机器看的懂而已，所以<code>纠结一个语言是解释型还是编译型语言在我的认知中是不必要</code>的<br><strong>上一段Java的流程图：</strong><br><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/eba6718c46ed4eb3ba17c137226ab477~tplv-k3u1fbpfcp-watermark.image" alt="image.png"></p>
+</blockquote>
+<h4 id="转换方式"><a href="#转换方式" class="headerlink" title="转换方式"></a>转换方式</h4><p>转换方式我放在最后单独说，因为可能和上述内容有一点点不同：</p>
+<ul>
+<li>假如我们要实现L语言</li>
+<li>我们现在已经有了L1语言的编译程序</li>
+<li>那么我们可以先把用L语言编写的程序转换成等价的L1语言程序</li>
+<li>再去利用L1语言的编译程序去实现L语言<br>说白了我们就是利用转换器将没有编译程序的L程序转换成已经存在编译程序的L1语言再去将其转换为目标程序<br>。<br><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/642cc737e5204bc6b7573175d4ef3581~tplv-k3u1fbpfcp-watermark.image" alt="image.png"><h1 id="编译器的结构"><a href="#编译器的结构" class="headerlink" title="编译器的结构"></a>编译器的结构</h1><h2 id="引言——没有谁是一座孤岛，编译器也一样"><a href="#引言——没有谁是一座孤岛，编译器也一样" class="headerlink" title="引言——没有谁是一座孤岛，编译器也一样"></a>引言——没有谁是一座孤岛，编译器也一样</h2>程序设计语言是向人以及机器描述计算过程的记号，这个世界依赖于程序设计语言，因为在所有计算机上运行的所有软件都是用某种程序设计语言编写的，但是，在一个程序可以运行之前，他需要先被翻译成计算机可以执行的形式。做这个翻译工作的就是<code>编译器</code>。简单来讲，编译器就是一个程序，他可以阅读某一种语言编写的程序，并把该程序翻译成为一个等价的、用另一种语言编写的程序。<br>——引自《编译原理（第二版）》第一章引论部分<blockquote>
+<p><strong>编译器的基本任务</strong>：将源语言程序翻译成等价的目标语言程序<br><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/956c2cea70774943b01e070be70facde~tplv-k3u1fbpfcp-watermark.image" alt="image.png"><br>上文中引言可能也会造成些许理解误差，把源语言程序转换成计算机可执行文件有可能不完全是编译器独自完成的，编译器并不是孤军奋战，他也有很多同伴与之携手一同把源代码转换成机器上的可执行文件，在上一章对翻译程序的介绍中我们说过，翻译程序可能有很多部分组成，编译器可能只是其中一部分。创建一个可执行的目标程序可能还需要一些其他程序：</p>
+</blockquote>
+</li>
+<li><strong>预处理器</strong>：一个源程序很可能被分成多个模块，并存放在独立的文件中，预处理器可以把源程序聚合在一起，同时还负责把那些称为宏的缩写转换为源语言的语句。</li>
+<li><strong>编译器</strong>：将源语言程序翻译成等价的目标语言程序（可能产生汇编程序作为输出，因为汇编语言比较容易输出和调试）</li>
+<li><strong>汇编器</strong>：将汇编程序转换为可重定位机器代码</li>
+<li><strong>链接器</strong>：大型程序经常被分成多个部分进行编译，因此可重定位的机器代码有必要和其他可重定位的目标文件以及库文件链接在一起，形成真正的机器上运行的代码。链接器就是解决外部内存地址引用的问题。</li>
+<li><strong>加载器</strong>：把所有可执行目标文件放在内存中执行<br><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f53cbc3cf50d48a0ab51cc79a0317447~tplv-k3u1fbpfcp-watermark.image" alt="image.png"><br>OK，我们介绍了编译器和编译器的伙伴，那么接下来一起窥探一下编译器神秘表象下的内部结构吧。<h2 id="编译器内部结构概览"><a href="#编译器内部结构概览" class="headerlink" title="编译器内部结构概览"></a>编译器内部结构概览</h2>在我么开发者视角上，我们写完代码，之后之间编译运行，其实更多的时候对于编译器是无感知，可能更多的时候点击运行，之后呐喊link start！代码就跑起来了，当然估计没什么人会像这样有仪式感（其实正常人称呼这样的行为是中二）。所以编译器对于我们就像是一个黑盒子，我们把这个盒子打开一点，就可以看到里面包含两个部分：</li>
+<li>分析部分</li>
+<li>综合部分<br>经常分析部分被称为<strong>前端</strong>，综合部分被称作<strong>后端</strong>。<h3 id="分析部分（前端）"><a href="#分析部分（前端）" class="headerlink" title="分析部分（前端）"></a>分析部分（前端）</h3>分析部分把源程序分解成多个组成要素，并在这些要素之上加上语法结构。然后，它使用这个结构创建该程序的中间表示。当然在这个阶段如果检查出程序的语法错误，或者语义不一致，就必须提供有用的信息，使得用户可以将其改正。 </li>
+</ul>
+<p>分析部分还会收集有关源程序的信息，并把信息存放在一个称为<code>符号表</code>的数据结构中（<code>后期寒草</code>：“符号表在后面也会多次提到哦～”）。符号表和中间代码表示会作为综合部分的输入。</p>
+<h3 id="综合部分（后端）"><a href="#综合部分（后端）" class="headerlink" title="综合部分（后端）"></a>综合部分（后端）</h3><p>综合部分根据中间表示和符号表中的信息来构造用户期待的目标程序。</p>
+<h2 id="编译器分步骤介绍"><a href="#编译器分步骤介绍" class="headerlink" title="编译器分步骤介绍"></a>编译器分步骤介绍</h2><p>在上一段我们把编译器分成了两个阶段：前端和后端。但是如果我们能加详细的研究编译过程，会发现他会顺序执行一组步骤，一个典型的把编译原理分解成多个步骤的方式下面两个图片。当然在实践中，多个步骤可能会被组合在一起，而组合在一起的步骤之间的中间表示不需要被明确构造。<code>存放整个源程序的信息的符号表可以由编译器的各个步骤使用</code>。</p>
+<p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bb26a5871a6a4f298e92507f098de2be~tplv-k3u1fbpfcp-watermark.image" alt="image.png"><br>其中为了综合部分（后端程序）可以生成更好的目标程序，如果基于未经过优化的中间表示来生成代码，则代码质量会受到影响，所以可能会加入代码优化阶段。图中的两个代码优化阶段可以被省略。  </p>
+<p>所以我们进行一个简要的总结，其实整个步骤可以大致描述为以下几个阶段：</p>
+<ul>
+<li><strong>词法分析</strong></li>
+<li><strong>语法分析</strong></li>
+<li><strong>语义分析</strong></li>
+<li><strong>中间代码生成</strong></li>
+<li><strong>中间代码优化</strong></li>
+<li><strong>目标代码生成</strong><h3 id="词法分析"><a href="#词法分析" class="headerlink" title="词法分析"></a>词法分析</h3><h4 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h4>编译器的第一个步骤是词法分析，词法分析的输入是源程序的字符序列。识别每一个单词及其种类，并将其表示成TOKEN形式：<br><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2d26fdb5318a4322b18767489604d607~tplv-k3u1fbpfcp-watermark.image" alt="image.png"></li>
+</ul>
+<p><strong>tip</strong>:  </p>
+<ul>
+<li>词法分析阶段不依赖于语言的语法定义  </li>
+<li>词法分析的结果是语法分析的输入</li>
+</ul>
+<p><strong>词法分析还可以做到</strong>：  </p>
+<ul>
+<li>检测标识符拼写错误</li>
+<li>去掉代码中的注释<h4 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h4>举个例子大家可能就懂了：  <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">float</span> sum, first;</span><br><span class="line">sum = first + <span class="number">10</span>;</span><br></pre></td></tr></table></figure>
+上面是一段简单的代码，那么我们进行词法分析：</li>
+</ul>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fed71f0c30514ca892cf6cf9219b985d~tplv-k3u1fbpfcp-watermark.image" alt="image.png"><br>可能实现的话有差异，此处为了大家可以理解的更加清楚，所以一切从简，但是我们依然可以按照这个来理解，我想大家可能看完例子，就大概明白了这个过程。  </p>
+<blockquote>
+<p>为什么第一个sum变成了标识符 1 呢，其实标识符后面对应的值其实指向了<code>符号表</code>的引用，后面first对应2也是这个道理</p>
+</blockquote>
+<p><strong>词素</strong>：语法功能的最小单位，上面 float，sum，first，+ 等都是一个词素。</p>
+<h3 id="语法分析"><a href="#语法分析" class="headerlink" title="语法分析"></a>语法分析</h3><h4 id="介绍-1"><a href="#介绍-1" class="headerlink" title="介绍"></a>介绍</h4><p>语法分析是编译器的第二个步骤，语法分析会使用<strong>词法分析生成的TOKEN序列</strong>，并依据<strong>源语言的语法规则</strong>生成树形的中间表示。该中间表示给出了词法分析产生的词法单元流的语法结构。</p>
+<p><strong>tip：</strong></p>
+<ul>
+<li>分析时如果发现错误，则输出错误的位置以及类型</li>
+<li>未发现错误则将语法分析的输入（词法分析的输出）转换为树形中间形式，常用的方法是<strong>语法树</strong></li>
+</ul>
+<blockquote>
+<p>语法树：树中的每个内部节点表示一个运算，而该节点的子节点表示该节点的子节点表示该运算的分量。<br><strong>输入：</strong></p>
+</blockquote>
+<ul>
+<li>当词法分析程序时语法分析程序的子程序时：输入为源程序的字符序列</li>
+<li>当词法分析是独立的：输入是TOKEN序列<h4 id="举例-1"><a href="#举例-1" class="headerlink" title="举例"></a>举例</h4>继续前面词法分析的例子来看。<br>首先我们的例子还是sum=first+10。他所对应的词法分析TOKEN序列是：<br><code>&lt;标识符，1&gt;  &lt;运算符，=&gt; &lt;标识符，2&gt; &lt;运算符，+&gt; &lt;整形常量，10&gt; &lt;分隔符，；&gt;</code>  </li>
+</ul>
+<p>其中 1对应sum，2对应first。</p>
+<p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/654c5fffae574d2a86e56e7fba0466b5~tplv-k3u1fbpfcp-watermark.image" alt="image.png"></p>
+<h3 id="语义分析"><a href="#语义分析" class="headerlink" title="语义分析"></a>语义分析</h3><h4 id="介绍-2"><a href="#介绍-2" class="headerlink" title="介绍"></a>介绍</h4><p>编译器的第三个步骤是语义分析，该能力由<strong>语义分析器</strong>提供，语义分析器使用语法树和符号表中的信息来检查源程序是否和语言定义的语义一致。它同时收集类型信息，并把这些信息存放在语法树或者符号表中，以便在随后的中间代码生成过程中使用。于是语义分析器的作用为：</p>
+<ul>
+<li>审查源程序是否有语义错误</li>
+<li>为代码生成收集类型信息<blockquote>
+<p><strong>类型检查</strong>：类型检查是语义分析的重要组成部分，编译器检查每个运算符是否具备匹配的运算分量，比如：</p>
+<ol>
+<li>数组的下标必须是整数，浮点数作为下标会报错。</li>
+<li>条件表达式必须是布尔型</li>
+<li>赋值语句左右两边类型是否相融</li>
+<li>…</li>
+</ol>
+</blockquote>
+</li>
+</ul>
+<blockquote>
+<p><strong>自动类型转换</strong>：某些程序设计语言会允许某些类型转换，那么在语义分析阶段也会进行自动类型转换，比如：</p>
+<ul>
+<li>一个二元运算符可以应用于一对整数或者一对浮点数。那么该运算符如果应用于一个浮点数和一个整数，那么这个整数可能被自动转换成浮点数。</li>
+</ul>
+</blockquote>
+<h4 id="举例-2"><a href="#举例-2" class="headerlink" title="举例"></a>举例</h4><p>语义错误请看注释：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">float</span> sum, first;</span><br><span class="line">sum = first + <span class="number">10</span>;</span><br><span class="line">count = sum; <span class="comment">//count无定义</span></span><br><span class="line">first = sum % <span class="number">10</span>;<span class="comment">//sum是浮点型，不能进行取余数运算</span></span><br></pre></td></tr></table></figure>
+<h3 id="中间代码生成"><a href="#中间代码生成" class="headerlink" title="中间代码生成"></a>中间代码生成</h3><h4 id="介绍-3"><a href="#介绍-3" class="headerlink" title="介绍"></a>介绍</h4><p>在把一个源程序翻译成目标代码的过程中，一个编译器可能构造出一个或者多个中间表示，这个中间表示可以有多种形式。</p>
+<blockquote>
+<p>语法树就是一种中间表示形式，在语法分析和语义分析中使用。</p>
+</blockquote>
+<p>在语法分析和语义分析完成之后，很多编译器会生成一个明确的低级或者类机器语言的中间表示。这个中间表示应该具备两个重要的性质：  </p>
+<ul>
+<li><code>易于生成</code></li>
+<li><code>可以轻松的翻译为目标机器上的语言</code></li>
+</ul>
+<p>当然这个中间代码可能存在很多种形式：</p>
+<ul>
+<li><code>后缀式（栈式）中间代码</code></li>
+<li><code>三地址中间代码（三元式和四元式）</code></li>
+<li><code>图结构的中间代码（树，DAG）</code></li>
+</ul>
+<h4 id="举例-3"><a href="#举例-3" class="headerlink" title="举例"></a>举例</h4><p>代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">float</span> sum, first, count;</span><br><span class="line">sum = first + count * <span class="number">10</span>;</span><br></pre></td></tr></table></figure>
+<p>中间代码（四元式）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(int-to-float, 10, , t1)</span><br><span class="line">(*, count, t1, t2)</span><br><span class="line">(+, first, t2, t3)</span><br><span class="line">(=, t3, , sum)</span><br></pre></td></tr></table></figure>
+<p>简单解释一下：</p>
+<ul>
+<li>真正的中间代码里其中的count，first这种会表示成符号表中的引用。</li>
+<li>(*, count, t1, t2)以这个为例子含义是 t2 = t1 * count</li>
+</ul>
+<blockquote>
+<p>关于三地址指令：</p>
+<ul>
+<li>每个三地址赋值指令右部最多只有一个运算符，因此这些指令顺序确定了运算的顺序</li>
+<li>编译器应该生成一个临时名字以存放一个三地址指令计算得到的值（t1，t2…）</li>
+<li>有些三地址指令的运算分量少于三个，比如上面中间代码的第一条和最后一条。</li>
+</ul>
+</blockquote>
+<h3 id="代码优化"><a href="#代码优化" class="headerlink" title="代码优化"></a>代码优化</h3><h4 id="介绍-4"><a href="#介绍-4" class="headerlink" title="介绍"></a>介绍</h4><p><strong>目的</strong>：改进中间代码，意图生成更好的目标代码。</p>
+<blockquote>
+<p>更好通常意味着更快，但是也可能会有其他目标，比如更短的或者能耗更低的代码。</p>
+</blockquote>
+<p>不同的编译器在代码优化过程所做的工作量可能相差很大，那些优化工作做的很多的编译器（即所谓的<code>优化编译器</code>）会在优化阶段花费相当多的时间，有些简单的优化方法可以极大的提高目标程序的运行效率而不会过多的降低编译速度。  </p>
+<p><strong>常见的优化方式</strong>：</p>
+<ul>
+<li>常量表达式优化</li>
+<li>公共子表达式优化</li>
+<li>不变表达式的循环外提</li>
+<li>削弱运算强度</li>
+<li>…<h4 id="举例-4"><a href="#举例-4" class="headerlink" title="举例"></a>举例</h4>中间代码（四元式）：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(int-to-float, 10, , t1)</span><br><span class="line">(*, count, t1, t2)</span><br><span class="line">(+, first, t2, t3)</span><br><span class="line">(=, t3, , sum)</span><br></pre></td></tr></table></figure>
+<p>常量表达式优化：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(*, count, 10.0, t2)</span><br><span class="line">(+, first, t2, t3)</span><br><span class="line">(=, t3, , sum)</span><br></pre></td></tr></table></figure>
+<h3 id="目标代码生成"><a href="#目标代码生成" class="headerlink" title="目标代码生成"></a>目标代码生成</h3><h4 id="介绍-5"><a href="#介绍-5" class="headerlink" title="介绍"></a>介绍</h4><p>代码生成器以源程序的中间表示形式（中间代码）为输入，并把他映射为目标语言。如果目标语言是机器代码，那么：</p>
+<ol>
+<li>必须为程序使用的每个变量选择寄存器或者内存位置。</li>
+<li>然后，中间指令被翻译成为能够完成相同任务的机器指令序列。</li>
+</ol>
+<blockquote>
+<p>代码生成的一个至关重要的方面是合理分配寄存器以及存放变量的值。</p>
+</blockquote>
+<h4 id="举例-5"><a href="#举例-5" class="headerlink" title="举例"></a>举例</h4><p>源程序：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">float</span> sum, first, count;</span><br><span class="line">sum = first + count * <span class="number">10</span>;</span><br></pre></td></tr></table></figure>
+<p>汇编代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">MOV count, R1</span><br><span class="line">MULT R1, #10.0</span><br><span class="line">MOV first, R2</span><br><span class="line">ADD R1, R2</span><br><span class="line">MOV R1, sum</span><br></pre></td></tr></table></figure>
+<h2 id="章节小结"><a href="#章节小结" class="headerlink" title="章节小结"></a>章节小结</h2><p>根据前文介绍，编译器大体可以分为以下几个步骤：</p>
+<ul>
+<li><strong>词法分析</strong></li>
+<li><strong>语法分析</strong></li>
+<li><strong>语义分析</strong></li>
+<li><strong>中间代码生成</strong></li>
+<li><strong>中间代码优化</strong></li>
+<li><strong>目标代码生成</strong><br>后面的文章会对各个步骤的细节进行详细介绍，也会使用小的编译器源码作为例子。下图是《编译原理（第二版）》中的图例，我想大家到这里应该已经对编译器的整个流程有了初步的了解，也可以借助这个图片进行一个简单的回顾～<br><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/eb48e4de69a242ec91fab92e50da3385~tplv-k3u1fbpfcp-watermark.image" alt="image.png"><h1 id="结束语"><a href="#结束语" class="headerlink" title="结束语"></a>结束语</h1><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/913d3ff4367a4f88bbad7e5f3bf9d30e~tplv-k3u1fbpfcp-watermark.image" alt="image.png"><br>文章中内容来自：</li>
+<li>《编译原理（第二版）》</li>
+<li>母校课件</li>
+<li>经过本人筛选验证的知乎问答</li>
+<li>本人的理解（本人理解可能是其中最没有权威可言的部分hhh）<blockquote>
+<p>课题内容较多较深，如果存在问题可能无法避免，希望大家不吝赐教，如果存在问题我会积极修正完善～  </p>
+</blockquote>
+</li>
+</ul>
+<p>在此也希望大家感兴趣可以支持我以前的文章系列：<br><a target="_blank" rel="noopener" href="https://juejin.cn/column/6966041450156916750">浏览器渲染机制</a><br><a target="_blank" rel="noopener" href="https://juejin.cn/post/6939688892526231582">Promise专题</a><br>…<br>不仅如此，还有很多有趣的内容：<br><a target="_blank" rel="noopener" href="https://juejin.cn/user/703340610597064/posts">寒草的掘金主页</a><br><a target="_blank" rel="noopener" href="https://github.com/CodingCommunism">我们的github</a><br>最后！！！<br><code>少年与爱永不老去，即便披荆斩棘，丢失怒马鲜衣</code><br>我是寒草<br>间歇性热血，持续性沙雕，希望和大家共同成长，成为一起努力的伙伴<br>微信：hancao97</p>
+</div><div class="article-licensing box"><div class="licensing-title"><p>前端学编译原理（一）：编译引论</p><p><a href="https://hancao97.github.io/2021/07/01/编译原理浅析/">https://hancao97.github.io/2021/07/01/编译原理浅析/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>寒草</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2021-07-01</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2021-09-28</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icons" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="icon fab fa-creative-commons"></i></a><a class="icons" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="icon fab fa-creative-commons-by"></i></a><a class="icons" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="icon fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><div class="article-tags is-size-7 mb-4"><span class="mr-2">#</span><a class="link-muted mr-2" rel="tag" href="/tags/%E5%89%8D%E7%AB%AF/">前端</a><a class="link-muted mr-2" rel="tag" href="/tags/javascript/">javascript</a><a class="link-muted mr-2" rel="tag" href="/tags/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/">编译原理</a><a class="link-muted mr-2" rel="tag" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/">计算机基础</a></div><!--!--></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="/img/alpay.jpeg" alt="支付宝"></span></a><a class="button donate" href="/" target="_blank" rel="noopener" data-type="patreon"><span class="icon is-small"><i class="fab fa-patreon"></i></span><span>Patreon</span></a><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/img/wechat.jpeg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2021/08/01/%E6%AD%A3%E5%88%99%E5%AE%9E%E7%8E%B0/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">草系前端手摸手带你实现正则引擎，点燃夏日最热情的烟火🔥</span></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div class="notification is-danger">You forgot to set the <code>shortname</code> for Disqus. Please set it in <code>_config.yml</code>.</div></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-3-widescreen  order-1 is-sticky"><div class="card widget" data-type="profile"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="avatar" src="/img/hancao.png" alt="寒草"></figure><p class="title is-size-4 is-block" style="line-height:inherit;">寒草</p><p class="is-size-6 is-block">一只草系前端，或许是个精灵</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>北京.奇安信.BBFE</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">文章</p><a href="/archives"><p class="title">2</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">分类</p><a href="/categories"><p class="title">1</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">标签</p><a href="/tags"><p class="title">6</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://github.com/gepingli" target="_blank" rel="noopener">关注我</a></div><div class="level is-mobile is-multiline"><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="掘金" href="https://juejin.cn/user/703340610597064/posts"><i class="fas fa-blog"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/gepingli"><i class="fab fa-github"></i></a></div></div></div><div class="card widget" id="toc" data-type="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">目录</h3><ul class="menu-list"><li><a class="level is-mobile" href="#引言"><span class="level-left"><span class="level-item">1</span><span class="level-item">引言</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#凡事都可以扯一扯情怀"><span class="level-left"><span class="level-item">1.1</span><span class="level-item">凡事都可以扯一扯情怀</span></span></a></li><li><a class="level is-mobile" href="#为什么要学编译原理"><span class="level-left"><span class="level-item">1.2</span><span class="level-item">为什么要学编译原理</span></span></a></li><li><a class="level is-mobile" href="#开始前说点什么"><span class="level-left"><span class="level-item">1.3</span><span class="level-item">开始前说点什么</span></span></a></li></ul></li><li><a class="level is-mobile" href="#程序设计语言和编译程序"><span class="level-left"><span class="level-item">2</span><span class="level-item">程序设计语言和编译程序</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#低级语言基本概念"><span class="level-left"><span class="level-item">2.1</span><span class="level-item">低级语言基本概念</span></span></a></li><li><a class="level is-mobile" href="#高级语言基本概念"><span class="level-left"><span class="level-item">2.2</span><span class="level-item">高级语言基本概念</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#形式语言"><span class="level-left"><span class="level-item">2.2.1</span><span class="level-item">形式语言</span></span></a></li><li><a class="level is-mobile" href="#高级语言"><span class="level-left"><span class="level-item">2.2.2</span><span class="level-item">高级语言</span></span></a></li></ul></li><li><a class="level is-mobile" href="#高级语言与汇编语言程序的执行"><span class="level-left"><span class="level-item">2.3</span><span class="level-item">高级语言与汇编语言程序的执行</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#翻译程序"><span class="level-left"><span class="level-item">2.3.1</span><span class="level-item">翻译程序</span></span></a></li><li><a class="level is-mobile" href="#执行方式"><span class="level-left"><span class="level-item">2.3.2</span><span class="level-item">执行方式</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#编译方式和解释方式"><span class="level-left"><span class="level-item">2.3.2.1</span><span class="level-item">编译方式和解释方式</span></span></a></li><li><a class="level is-mobile" href="#转换方式"><span class="level-left"><span class="level-item">2.3.2.2</span><span class="level-item">转换方式</span></span></a></li></ul></li></ul></li></ul></li><li><a class="level is-mobile" href="#编译器的结构"><span class="level-left"><span class="level-item">3</span><span class="level-item">编译器的结构</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#引言——没有谁是一座孤岛，编译器也一样"><span class="level-left"><span class="level-item">3.1</span><span class="level-item">引言——没有谁是一座孤岛，编译器也一样</span></span></a></li><li><a class="level is-mobile" href="#编译器内部结构概览"><span class="level-left"><span class="level-item">3.2</span><span class="level-item">编译器内部结构概览</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#分析部分（前端）"><span class="level-left"><span class="level-item">3.2.1</span><span class="level-item">分析部分（前端）</span></span></a></li><li><a class="level is-mobile" href="#综合部分（后端）"><span class="level-left"><span class="level-item">3.2.2</span><span class="level-item">综合部分（后端）</span></span></a></li></ul></li><li><a class="level is-mobile" href="#编译器分步骤介绍"><span class="level-left"><span class="level-item">3.3</span><span class="level-item">编译器分步骤介绍</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#词法分析"><span class="level-left"><span class="level-item">3.3.1</span><span class="level-item">词法分析</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#介绍"><span class="level-left"><span class="level-item">3.3.1.1</span><span class="level-item">介绍</span></span></a></li><li><a class="level is-mobile" href="#举例"><span class="level-left"><span class="level-item">3.3.1.2</span><span class="level-item">举例</span></span></a></li></ul></li><li><a class="level is-mobile" href="#语法分析"><span class="level-left"><span class="level-item">3.3.2</span><span class="level-item">语法分析</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#介绍-1"><span class="level-left"><span class="level-item">3.3.2.1</span><span class="level-item">介绍</span></span></a></li><li><a class="level is-mobile" href="#举例-1"><span class="level-left"><span class="level-item">3.3.2.2</span><span class="level-item">举例</span></span></a></li></ul></li><li><a class="level is-mobile" href="#语义分析"><span class="level-left"><span class="level-item">3.3.3</span><span class="level-item">语义分析</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#介绍-2"><span class="level-left"><span class="level-item">3.3.3.1</span><span class="level-item">介绍</span></span></a></li><li><a class="level is-mobile" href="#举例-2"><span class="level-left"><span class="level-item">3.3.3.2</span><span class="level-item">举例</span></span></a></li></ul></li><li><a class="level is-mobile" href="#中间代码生成"><span class="level-left"><span class="level-item">3.3.4</span><span class="level-item">中间代码生成</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#介绍-3"><span class="level-left"><span class="level-item">3.3.4.1</span><span class="level-item">介绍</span></span></a></li><li><a class="level is-mobile" href="#举例-3"><span class="level-left"><span class="level-item">3.3.4.2</span><span class="level-item">举例</span></span></a></li></ul></li><li><a class="level is-mobile" href="#代码优化"><span class="level-left"><span class="level-item">3.3.5</span><span class="level-item">代码优化</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#介绍-4"><span class="level-left"><span class="level-item">3.3.5.1</span><span class="level-item">介绍</span></span></a></li><li><a class="level is-mobile" href="#举例-4"><span class="level-left"><span class="level-item">3.3.5.2</span><span class="level-item">举例</span></span></a></li></ul></li><li><a class="level is-mobile" href="#目标代码生成"><span class="level-left"><span class="level-item">3.3.6</span><span class="level-item">目标代码生成</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#介绍-5"><span class="level-left"><span class="level-item">3.3.6.1</span><span class="level-item">介绍</span></span></a></li><li><a class="level is-mobile" href="#举例-5"><span class="level-left"><span class="level-item">3.3.6.2</span><span class="level-item">举例</span></span></a></li></ul></li></ul></li><li><a class="level is-mobile" href="#章节小结"><span class="level-left"><span class="level-item">3.4</span><span class="level-item">章节小结</span></span></a></li></ul></li><li><a class="level is-mobile" href="#结束语"><span class="level-left"><span class="level-item">4</span><span class="level-item">结束语</span></span></a></li></ul></div></div><style>#toc .menu-list > li > a.is-active + .menu-list { display: block; }#toc .menu-list > li > a + .menu-list { display: none; }</style><script src="/js/toc.js" defer></script></div><div class="card widget" data-type="links"><div class="card-content"><div class="menu"><h3 class="menu-label">链接</h3><ul class="menu-list"><li><a class="level is-mobile" href="https://juejin.cn/user/703340610597064/columns" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">掘金专栏</span></span><span class="level-right"><span class="level-item tag">juejin.cn</span></span></a></li><li><a class="level is-mobile" href="https://www.zhihu.com/people/ge-ping-li" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">知乎</span></span><span class="level-right"><span class="level-item tag">www.zhihu.com</span></span></a></li><li><a class="level is-mobile" href="https://juejin.cn/user/325111174662855/posts" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">洛竹</span></span><span class="level-right"><span class="level-item tag">juejin.cn</span></span></a></li></ul></div></div></div><div class="card widget" data-type="categories"><div class="card-content"><div class="menu"><h3 class="menu-label">分类</h3><ul class="menu-list"><li><a class="level is-mobile" href="/categories/%E5%89%8D%E7%AB%AF%E4%B8%8E%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/"><span class="level-start"><span class="level-item">前端与编译原理</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li></ul></div></div></div><div class="card widget" data-type="tags"><div class="card-content"><div class="menu"><h3 class="menu-label">标签</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/javascript/"><span class="tag">javascript</span><span class="tag">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%89%8D%E7%AB%AF/"><span class="tag">前端</span><span class="tag">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%AD%A3%E5%88%99/"><span class="tag">正则</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E7%8A%B6%E6%80%81%E6%9C%BA/"><span class="tag">状态机</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/"><span class="tag">编译原理</span><span class="tag">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/"><span class="tag">计算机基础</span><span class="tag">2</span></a></div></div></div></div></div><div class="column-right-shadow is-hidden-widescreen is-sticky"></div></div><div class="column column-right is-4-tablet is-4-desktop is-3-widescreen is-hidden-touch is-hidden-desktop-only order-3 is-sticky"><div class="card widget" data-type="recent-posts"><div class="card-content"><h3 class="menu-label">最新文章</h3><article class="media"><figure class="media-left"><a class="image" href="/2021/08/01/%E6%AD%A3%E5%88%99%E5%AE%9E%E7%8E%B0/"><img src="/img/%E6%AD%A3%E5%88%99%E5%AE%9E%E7%8E%B0/zhengze.jpeg" alt="草系前端手摸手带你实现正则引擎，点燃夏日最热情的烟火🔥"></a></figure><div class="media-content"><p class="date"><time dateTime="2021-08-01T08:07:00.000Z">2021-08-01</time></p><p class="title"><a href="/2021/08/01/%E6%AD%A3%E5%88%99%E5%AE%9E%E7%8E%B0/">草系前端手摸手带你实现正则引擎，点燃夏日最热情的烟火🔥</a></p><p class="categories"><a href="/categories/%E5%89%8D%E7%AB%AF%E4%B8%8E%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/">前端与编译原理</a></p></div></article><article class="media"><figure class="media-left"><a class="image" href="/2021/07/01/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E6%B5%85%E6%9E%90/"><img src="/img/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E6%B5%85%E6%9E%90/bianyi.jpeg" alt="前端学编译原理（一）：编译引论"></a></figure><div class="media-content"><p class="date"><time dateTime="2021-07-01T08:07:00.000Z">2021-07-01</time></p><p class="title"><a href="/2021/07/01/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E6%B5%85%E6%9E%90/">前端学编译原理（一）：编译引论</a></p><p class="categories"><a href="/categories/%E5%89%8D%E7%AB%AF%E4%B8%8E%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/">前端与编译原理</a></p></div></article></div></div><div class="card widget" data-type="archives"><div class="card-content"><div class="menu"><h3 class="menu-label">归档</h3><ul class="menu-list"><li><a class="level is-mobile" href="/archives/2021/08/"><span class="level-start"><span class="level-item">八月 2021</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2021/07/"><span class="level-start"><span class="level-item">七月 2021</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li></ul></div></div></div></div></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.svg" alt="寒草的博客" height="28"></a><p class="is-size-7"><span>&copy; 2021 寒草</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
+      window.cookieconsent.initialise({
+        type: "info",
+        theme: "edgeless",
+        static: false,
+        position: "bottom-left",
+        content: {
+          message: "此网站使用Cookie来改善您的体验。",
+          dismiss: "知道了！",
+          allow: "允许使用Cookie",
+          deny: "拒绝",
+          link: "了解更多",
+          policy: "Cookie政策",
+          href: "https://www.cookiesandyou.com/",
+        },
+        palette: {
+          popup: {
+            background: "#edeff5",
+            text: "#838391"
+          },
+          button: {
+            background: "#4b81e8"
+          },
+        },
+      });
+    });</script><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script></body></html>
