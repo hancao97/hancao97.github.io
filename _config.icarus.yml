@@ -109,7 +109,7 @@ navbar:
         文章: /archives
         分类: /categories
         标签: /tags
-        关于: /about
+        关于: /about/
     # Links to be shown on the right of the navigation bar
     # links:
     #     Download on GitHub:
@@ -181,10 +181,10 @@ donates:
     #     # URL to the "Buy me a coffee" page
     #     url: ''
     # Patreon donate button configurations
-    -
-        type: patreon
-        # URL to the Patreon page
-        url: ''
+    # -
+    #     type: patreon
+    #     # URL to the Patreon page
+    #     url: ''
     # Paypal donate button configurations
     # -
     #     type: paypal
